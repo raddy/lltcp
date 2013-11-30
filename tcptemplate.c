@@ -44,7 +44,14 @@ unsigned get_source_ip(struct TemplatePacket *tmpl){
 
 unsigned get_source_port(struct TemplatePacket *tmpl){
 
-    return tmpl->packet[tmpl->offset_ip+0]<<8 | tmpl->packet[tmpl->offset_ip+1]<<0;
+    return tmpl->packet[tmpl->offset_tcp+0]<<8 | tmpl->packet[tmpl->offset_tcp+1]<<0;
+}
+
+unsigned char * get_ip_checksum(struct TemplatePacket *tmpl){
+    static unsigned char buf[2];
+    buf[0] = tmpl->packet[tmpl->offset_ip+10];
+    buf[1] = tmpl->packet[tmpl->offset_ip+11];
+    return buf;
 }
 
 
@@ -145,6 +152,7 @@ void template_init(struct TemplatePacket *tmpl,
     }
     tmpl->offset_ip = parsed.ip_offset;
     tmpl->offset_tcp = parsed.transport_offset;
+    tmpl->offset_app = parsed.app_offset;
 
 	memcpy(px+0, mac_dest, 6);
     memcpy(px+6, mac_source, 6);

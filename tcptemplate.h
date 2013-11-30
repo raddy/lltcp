@@ -26,5 +26,6 @@ void template_target(struct TemplatePacket *tmpl,
 unsigned get_source_ip(struct TemplatePacket *tmpl);
 unsigned get_dest_ip(struct TemplatePacket *tmpl);
 unsigned get_source_port(struct TemplatePacket *tmpl);
+unsigned char * get_ip_checksum(struct TemplatePacket *tmpl);
 
 #endif
