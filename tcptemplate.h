@@ -23,6 +23,14 @@ void template_target(struct TemplatePacket *tmpl,
     unsigned ip_me, unsigned port_me,
     unsigned seqno);
 
+size_t create_packet(struct TemplatePacket *tmpl, 
+    unsigned ip_them, unsigned port_them,
+    unsigned ip_me, unsigned port_me,
+    unsigned seqno,unsigned ackno,
+    unsigned flags,const unsigned char *payload, 
+    size_t payload_length,unsigned char *px, 
+    size_t px_length);
+
 unsigned get_source_ip(struct TemplatePacket *tmpl);
 unsigned get_dest_ip(struct TemplatePacket *tmpl);
 unsigned get_source_port(struct TemplatePacket *tmpl);
