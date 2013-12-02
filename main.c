@@ -20,7 +20,7 @@ int main(int argc, char **argv)
 	struct TemplatePacket tmpl[1];
 	char packet_buffer[2048];
     ssize_t sock_len;
-    size_t reponse_len;
+    size_t response_len;
     unsigned char response[60];
 
 	rawsock_get_adapter_mac(dev, adapter_mac);
