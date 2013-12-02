@@ -26,7 +26,7 @@ void raw_send(int raw,unsigned char * packet){
 	}
 }
 
-void parse_raw(u_char * packet,int pkt_len){
+int parse_raw(u_char * packet,int pkt_len){
 	struct ip *ip;
 	struct tcphdr *tcp;
 	u_char *ptr;
@@ -42,8 +42,10 @@ void parse_raw(u_char * packet,int pkt_len){
     char buf[64];
 
 	int x = preprocess_frame(packet, pkt_len, 1, &parsed);
-	if (!x)
+	if (!x){
 		printf("Corrupt Packet \n");
+		return -1;
+	}
 	ip_me = parsed.ip_dst[0]<<24 | parsed.ip_dst[1]<<16
             | parsed.ip_dst[2]<< 8 | parsed.ip_dst[3]<<0;
     ip_them = parsed.ip_src[0]<<24 | parsed.ip_src[1]<<16
@@ -69,32 +71,26 @@ void parse_raw(u_char * packet,int pkt_len){
 		reason_string(TCP_FLAGS(packet, parsed.transport_offset), buf, sizeof(buf)));
 	// flags=0x%02x(%s)\n",seqno_me, 
       //          
-	if (TCP_IS_SYNACK(packet, parsed.transport_offset))
-		printf("\nThis is a SYN-ACK!");
+	if (TCP_IS_SYNACK(packet, parsed.transport_offset)){
+		printf("\nThis is a SYN-ACK!\n");
+		//we should create new tcp connection here
+		//for now lets just
+	}
 	
 }
 
-void read_socket(int raw, int numPackets){
+ssize_t read_socket(int raw, char *packet_buffer){
     struct sockaddr_ll packet_info;
     int packet_info_size = sizeof(packet_info_size);
-    uint8_t packet_buffer[2048];
+    
     ssize_t len;
-
-
- 
-    while (numPackets)
-    {
-        if((len = recvfrom(raw, packet_buffer, 2048, 0, (struct sockaddr*)&packet_info, &packet_info_size)) == -1)
-        {
-            return;
-        }
-        else
-        {
-            printf("got a packet of length %d\n",(int)len);
-            parse_raw((u_char *)packet_buffer,(int)len);
-            numPackets--;
-        }
-    }
+    while (1){
+		if((len = recvfrom(raw, packet_buffer, 2048, 0, (struct sockaddr*)&packet_info, &packet_info_size)) == -1){
+	            return -1;
+	    }else{
+	    	return len;
+	    }
+	}
 }
 
 int get_raw_socket(char * device, int protocol){//,struct sockaddr_ll *ps_sockaddr){
