@@ -1,6 +1,7 @@
 #ifndef TCPTEMPLATE_H
 #define TCPTEMPLATE_H
 
+#include <stdlib.h>
 
 
 struct TemplatePacket {
