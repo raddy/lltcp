@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <linux/if_ether.h>
-
+#include <sys/types.h>
 #include "preprocess.h"
 #include "tcpmacros.h"
 #include "tcptemplate.h"
