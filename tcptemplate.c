@@ -66,7 +66,7 @@ size_t create_packet(struct TemplatePacket *tmpl,
     unsigned offset_payload = tmpl->offset_tcp + ((tmpl->packet[tmpl->offset_tcp+12]&0xF0)>>2);
     size_t new_length = offset_payload + payload_length;
     uint64_t xsum;
-    size_t ip_len = (offset_payload - offset_ip) + payload_length;
+    size_t ip_len = (offset_payload - tmpl->offset_ip) + payload_length;
     unsigned old_len;
 
     if (new_length > px_length) {
