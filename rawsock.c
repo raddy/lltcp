@@ -73,10 +73,11 @@ unsigned parse_raw(u_char * packet,int pkt_len){
       //          
 	if (TCP_IS_SYNACK(packet, parsed.transport_offset)){
 		printf("\nThis is a SYN-ACK!\n");
+		return seqno_them;
 		//we should create new tcp connection here
 		//for now lets just
 	}
-	return seqno_them;
+	return -1;
 }
 
 ssize_t read_socket(int raw, char *packet_buffer){

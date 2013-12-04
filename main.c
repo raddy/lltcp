@@ -8,6 +8,26 @@
 #include "rawsock.h"
 
 
+char *
+allocate_strmem (int len)
+{
+  void *tmp;
+
+  if (len <= 0) {
+    fprintf (stderr, "ERROR: Cannot allocate memory because len = %i in allocate_strmem().\n", len);
+    exit (EXIT_FAILURE);
+  }
+
+  tmp = (char *) malloc (len * sizeof (char));
+  if (tmp != NULL) {
+    memset (tmp, 0, len * sizeof (char));
+    return (tmp);
+  } else {
+    fprintf (stderr, "ERROR: Cannot allocate memory for array allocate_strmem().\n");
+    exit (EXIT_FAILURE);
+  }
+}
+
 //iptables -A INPUT -p tcp -i eth10gb1 --dport 7771 -j DROP
 int main(int argc, char **argv)
 {
@@ -20,9 +40,10 @@ int main(int argc, char **argv)
 	struct TemplatePacket tmpl[1];
 	char packet_buffer[2048];
     ssize_t sock_len;
-    size_t response_len;
-    unsigned char response[60];
+    size_t response_len,payloadlen;
+    unsigned char response[2048];
     unsigned seq_them;
+    char *payload, *url, *directory, *filename;
 
 	rawsock_get_adapter_mac(dev, adapter_mac);
     
@@ -36,13 +57,34 @@ int main(int argc, char **argv)
     }
 
     raw_send(raw,tmpl->packet);
-    sock_len = read_socket(raw,packet_buffer); //grabs 1 packet
-    seq_them = parse_raw((u_char *)packet_buffer,(int)sock_len);
+    while (seq_them<0){ //spin till syn-ack
+        sock_len = read_socket(raw,packet_buffer); //grabs 1 packet
+        seq_them = parse_raw((u_char *)packet_buffer,(int)sock_len);
+    }
     response_len = create_packet(tmpl,target_ip,30333,adapter_ip,7771,
-        0,seq_them+1,0x10,0,0,response,60);
+        1,seq_them+1,0x10,0,0,response,60);
     raw_send(raw,response);
+
+    //temporary way of doing payload quickly
+    payload = allocate_strmem (IP_MAXPACKET);
+    url = allocate_strmem (40);
+    directory = allocate_strmem (80);
+    filename = allocate_strmem (80);
+
+    // Set TCP data.
+    strcpy (url, "www.google.com");  // Could be URL or IPv4 address
+    strcpy (directory, "/");
+    strcpy (filename, "filename");
+    sprintf (payload, "GET %s%s HTTP/1.1\r\nHost: %s\r\n\r\n", directory, filename, url);
+    payloadlen = strlen (payload);
+
+    //TRY WITH PUSH
     response_len = create_packet(tmpl,target_ip,30333,adapter_ip,7771,
-        0,seq_them+1,0x11,0,0,response,60);
+        1,seq_them+1,0x18,payload,payloadlen,response,sizeof(response));
+
+    //kill connection
+    response_len = create_packet(tmpl,target_ip,30333,adapter_ip,7771,
+        1+payloadlen,seq_them+1,0x11,0,0,response,60);
     raw_send(raw,response);
 	return 0;
 }
