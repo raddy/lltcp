@@ -66,7 +66,7 @@ int main(int argc, char **argv)
     raw_send(raw,response);
 
     //temporary way of doing payload quickly
-    payload = allocate_strmem (IP_MAXPACKET);
+    payload = allocate_strmem (2048);
     url = allocate_strmem (40);
     directory = allocate_strmem (80);
     filename = allocate_strmem (80);

@@ -28,5 +28,3 @@ distclean: clean
 define OBJECT_DEPENDS_ON_CORRESPONDING_HEADER
 	$(1) : ${1:.o=.h}
 endef
-
-$(foreach object_file,$(program_OBJS),$(eval $(call OBJECT_DEPENDS_ON_CORRESPONDING_HEADER,$(object_file))))
