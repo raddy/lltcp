@@ -37,7 +37,8 @@ int main(int argc, char **argv)
 	unsigned target_ip = ip_to_int(targ_ip);
 	unsigned char adapter_mac[6];
 	unsigned char router_mac[6] = {0x00, 0x1c, 0x73, 0x3f, 0xf5, 0x91};
-	struct TemplatePacket tmpl[1];
+	unsigned myport = 7772;
+    struct TemplatePacket tmpl[1];
 	char packet_buffer[2048];
     ssize_t sock_len;
     size_t response_len,payloadlen;
@@ -49,7 +50,7 @@ int main(int argc, char **argv)
     
     
 	template_init(tmpl,adapter_mac,router_mac);
-	template_target(tmpl,target_ip,30333,adapter_ip,7771,0);
+	template_target(tmpl,target_ip,30333,adapter_ip,myport,0);
     int raw = get_raw_socket(dev,ETH_P_ALL);
     if (raw==-1){
         printf("Could not open raw socket!\n");
@@ -61,7 +62,7 @@ int main(int argc, char **argv)
         sock_len = read_socket(raw,packet_buffer); //grabs 1 packet
         seq_them = parse_raw((u_char *)packet_buffer,(int)sock_len);
     }
-    response_len = create_packet(tmpl,target_ip,30333,adapter_ip,7771,
+    response_len = create_packet(tmpl,target_ip,30333,adapter_ip,myport,
         1,seq_them+1,0x10,0,0,response,60);
     raw_send(raw,response);
 
@@ -79,12 +80,12 @@ int main(int argc, char **argv)
     payloadlen = strlen (payload);
 
     //TRY WITH PUSH
-    response_len = create_packet(tmpl,target_ip,30333,adapter_ip,7771,
+    response_len = create_packet(tmpl,target_ip,30333,adapter_ip,myport,
         1,seq_them+1,0x18,payload,payloadlen,response,sizeof(response));
     printf("%s\n",payload);
     raw_send(raw,response);
     //kill connection
-    response_len = create_packet(tmpl,target_ip,30333,adapter_ip,7771,
+    response_len = create_packet(tmpl,target_ip,30333,adapter_ip,myport,
         1+payloadlen,seq_them+1,0x11,0,0,response,60);
     raw_send(raw,response);
 	return 0;

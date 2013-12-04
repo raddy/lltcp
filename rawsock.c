@@ -60,7 +60,7 @@ unsigned parse_raw(u_char * packet,int pkt_len){
     if (parsed.found != FOUND_TCP)
     	return;
 
-    printf("My IP: %u.%u.%u.%u :: ", 
+    /*printf("My IP: %u.%u.%u.%u :: ", 
             (ip_me>>24)&0xFF, (ip_me>>16)&0xFF, (ip_me>>8)&0xFF, (ip_me>>0)&0xFF);
    	printf("Their IP: %u.%u.%u.%u :: ", 
             (ip_them>>24)&0xFF, (ip_them>>16)&0xFF, (ip_them>>8)&0xFF, (ip_them>>0)&0xFF);
@@ -70,7 +70,7 @@ unsigned parse_raw(u_char * packet,int pkt_len){
 	printf("TCP flags=0x%02x(%s)",TCP_FLAGS(packet, parsed.transport_offset),
 		reason_string(TCP_FLAGS(packet, parsed.transport_offset), buf, sizeof(buf)));
 	// flags=0x%02x(%s)\n",seqno_me, 
-      //          
+      //          */
 	if (TCP_IS_SYNACK(packet, parsed.transport_offset)){
 		printf("\nThis is a SYN-ACK!\n");
 		return seqno_them;
