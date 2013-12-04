@@ -77,7 +77,7 @@ unsigned parse_raw(u_char * packet,int pkt_len){
 		//we should create new tcp connection here
 		//for now lets just
 	}
-	return -1;
+	return 0;
 }
 
 ssize_t read_socket(int raw, char *packet_buffer){

@@ -42,7 +42,7 @@ int main(int argc, char **argv)
     ssize_t sock_len;
     size_t response_len,payloadlen;
     unsigned char response[2048];
-    unsigned seq_them;
+    unsigned seq_them=0;
     char *payload, *url, *directory, *filename;
 
 	rawsock_get_adapter_mac(dev, adapter_mac);
@@ -57,7 +57,7 @@ int main(int argc, char **argv)
     }
 
     raw_send(raw,tmpl->packet);
-    while (seq_them<0){ //spin till syn-ack
+    while (seq_them == 0){ //spin till syn-ack
         sock_len = read_socket(raw,packet_buffer); //grabs 1 packet
         seq_them = parse_raw((u_char *)packet_buffer,(int)sock_len);
     }
@@ -81,7 +81,8 @@ int main(int argc, char **argv)
     //TRY WITH PUSH
     response_len = create_packet(tmpl,target_ip,30333,adapter_ip,7771,
         1,seq_them+1,0x18,payload,payloadlen,response,sizeof(response));
-
+    printf("%s\n",payload);
+    raw_send(raw,response);
     //kill connection
     response_len = create_packet(tmpl,target_ip,30333,adapter_ip,7771,
         1+payloadlen,seq_them+1,0x11,0,0,response,60);
