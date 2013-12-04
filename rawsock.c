@@ -26,7 +26,7 @@ void raw_send(int raw,unsigned char * packet){
 	}
 }
 
-int parse_raw(u_char * packet,int pkt_len){
+unsigned parse_raw(u_char * packet,int pkt_len){
 	struct ip *ip;
 	struct tcphdr *tcp;
 	u_char *ptr;
@@ -76,7 +76,7 @@ int parse_raw(u_char * packet,int pkt_len){
 		//we should create new tcp connection here
 		//for now lets just
 	}
-	
+	return seqno_them;
 }
 
 ssize_t read_socket(int raw, char *packet_buffer){

@@ -22,6 +22,7 @@ int main(int argc, char **argv)
     ssize_t sock_len;
     size_t response_len;
     unsigned char response[60];
+    unsigned seq_them;
 
 	rawsock_get_adapter_mac(dev, adapter_mac);
     
@@ -36,12 +37,12 @@ int main(int argc, char **argv)
 
     raw_send(raw,tmpl->packet);
     sock_len = read_socket(raw,packet_buffer); //grabs 1 packet
-    parse_raw((u_char *)packet_buffer,(int)sock_len);
+    seq_them = parse_raw((u_char *)packet_buffer,(int)sock_len);
     response_len = create_packet(tmpl,target_ip,30333,adapter_ip,7771,
-        0,0,0x10,0,0,response,60);
+        0,seq_them+1,0x10,0,0,response,60);
     raw_send(raw,response);
     response_len = create_packet(tmpl,target_ip,30333,adapter_ip,7771,
-        0,0,0x11,0,0,response,60);
+        0,seq_them+1,0x11,0,0,response,60);
     raw_send(raw,response);
 	return 0;
 }
