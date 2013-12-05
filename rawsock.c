@@ -58,7 +58,7 @@ unsigned parse_raw(u_char * packet,int pkt_len){
     seqno_them = TCP_SEQNO(packet, parsed.transport_offset);
     seqno_me = TCP_ACKNO(packet, parsed.transport_offset);
     if (parsed.found != FOUND_TCP)
-    	return;
+    	return 0 ;
 
     /*printf("My IP: %u.%u.%u.%u :: ", 
             (ip_me>>24)&0xFF, (ip_me>>16)&0xFF, (ip_me>>8)&0xFF, (ip_me>>0)&0xFF);
