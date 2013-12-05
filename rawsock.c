@@ -18,9 +18,9 @@
 #include <linux/if_ether.h>
 #include <linux/if_arp.h>
 
-void raw_send(int raw,unsigned char * packet){
+void raw_send(int raw,unsigned char * packet,size_t packet_len){
 
-	if (write(raw, packet, 60)< 0)  {
+	if (write(raw, packet, packet_len)< 0)  {
 		perror("write");
 		exit(1);
 	}

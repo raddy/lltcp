@@ -57,14 +57,14 @@ int main(int argc, char **argv)
         exit(-1);
     }
 
-    raw_send(raw,tmpl->packet);
+    raw_send(raw,tmpl->packet,60);
     while (seq_them == 0){ //spin till syn-ack
         sock_len = read_socket(raw,packet_buffer); //grabs 1 packet
         seq_them = parse_raw((u_char *)packet_buffer,(int)sock_len);
     }
     response_len = create_packet(tmpl,target_ip,30333,adapter_ip,myport,
         1,seq_them+1,0x10,0,0,response,60);
-    raw_send(raw,response);
+    raw_send(raw,response,60);
 
     //temporary way of doing payload quickly
     payload = allocate_strmem (2048);
@@ -83,16 +83,24 @@ int main(int argc, char **argv)
     response_len = create_packet(tmpl,target_ip,30333,adapter_ip,myport,
         1,seq_them+1,0x18,payload,payloadlen,response,sizeof(response));
     printf("%s\n",payload);
-    raw_send(raw,response);
+    raw_send(raw,response,response_len);
     sleep(1);
+
+    //TRY NO PUSH
+    response_len = create_packet(tmpl,target_ip,30333,adapter_ip,myport,
+        1+payloadlen,seq_them+1,0x10,payload,payloadlen,response,sizeof(response));
+    printf("%s\n",payload);
+    raw_send(raw,response,response_len);
+    sleep(1);
+
     //kill connection
     response_len = create_packet(tmpl,target_ip,30333,adapter_ip,myport,
         1+payloadlen,seq_them+1,0x11,0,0,response,60);
-    raw_send(raw,response);
+    raw_send(raw,response,response_len);
     sleep(1);
     response_len = create_packet(tmpl,target_ip,30333,adapter_ip,myport,
         1,seq_them+1,0x04,0,0,response,60);
-    raw_send(raw,response);
+    raw_send(raw,response,response_len);
 	return 0;
 }
 
