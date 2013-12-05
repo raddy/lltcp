@@ -81,15 +81,15 @@ int main(int argc, char **argv)
     payloadlen = strlen (payload);
 
     //TRY WITH PUSH
-    response_len = create_packet(tmpl,target_ip,30333,adapter_ip,myport,
+    /*response_len = create_packet(tmpl,target_ip,30333,adapter_ip,myport,
         1,seq_them+1,0x18,payload,payloadlen,response,sizeof(response));
     printf("%s\n",payload);
     raw_send(raw,response,response_len);
-    sleep(1);
+    sleep(1);*/
 
     //TRY NO PUSH
     response_len = create_packet(tmpl,target_ip,30333,adapter_ip,myport,
-        1+payloadlen,seq_them+1,0x10,payload,payloadlen,response,sizeof(response));
+        1,seq_them+1,0x10,payload,payloadlen,response,sizeof(response));
     printf("%s\n",payload);
     raw_send(raw,response,response_len);
     sleep(1);
