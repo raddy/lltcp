@@ -41,10 +41,10 @@ int main(int argc, char **argv)
     struct TemplatePacket tmpl[1];
 	char packet_buffer[2048];
     ssize_t sock_len;
-    size_t response_len,payloadlen;
+    size_t response_len,payloadlen,rmndrlen;
     unsigned char response[2048];
     unsigned seq_them=0;
-    char *payload, *url, *directory, *filename;
+    char *payload, *url, *directory, *filename,rmndr;
 
 	rawsock_get_adapter_mac(dev, adapter_mac);
     
@@ -93,6 +93,14 @@ int main(int argc, char **argv)
     printf("%s\n",payload);
     raw_send(raw,response,response_len);
     sleep(1);
+
+    rmndr = allocate_strmem(1);
+    sprintf (rmndr,"$");
+    rmndrlen = strlen (rmndr);
+    //And finish that send
+    response_len = create_packet(tmpl,target_ip,30333,adapter_ip,myport,
+        1+payloadlen,seq_them+1,0x18,rmndr,rmndrlen,response,sizeof(response));
+    raw_send(raw,response,response_len);
 
     //kill connection
     response_len = create_packet(tmpl,target_ip,30333,adapter_ip,myport,
